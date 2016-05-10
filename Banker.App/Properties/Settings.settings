@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Banker.App.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="GoogleSpreadsheetDocumentWriterRefreshToken" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GoogleSpreadsheetDocumentWriterSpreadsheetId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1jvBtXd06T28m1RrADbM1QShJ3_sdFe8um3-Zn7xQrhM</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
