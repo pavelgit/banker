@@ -1,6 +1,7 @@
 ﻿using Banker.Core;
 using Banker.Core.DocumentReaders;
 using Banker.Core.DocumentWriters;
+using Banker.Core.Loggers;
 using Banker.Core.Mappers;
 using Banker.Core.Reports;
 using Banker.Core.Tags;
@@ -15,18 +16,20 @@ namespace Banker.App {
     class Program {
         static void Main(string[] args) {
 
+            var logger = new ConsoleLogger();
             var documentAggregationService = new DocumentAggregationService();
 
-            var docuentReaders = new IDocumentReader[] {
-                new CommerzbankDocumentReader() { InputFolder = @"docs\commerzbank" },
-                new ConsorsbankDocumentReader() { InputFolder = @"docs\consorsbank-pasha" },
-                new ConsorsbankDocumentReader() { InputFolder = @"docs\consorsbank-dasha" },
+            var documentReaders = new IDocumentReader[] {
+                new CommerzbankDocumentReader(logger) { InputFolder = @"docs\commerzbank" },
+                new ConsorsbankDocumentReader(logger) { InputFolder = @"docs\consorsbank-pasha" },
+                new ConsorsbankDocumentReader(logger) { InputFolder = @"docs\consorsbank-dasha" },
             };
 
-            var tagService = new YamlListTagService();
+            var tagService = new YamlListTagService(logger);
             tagService.InitFromYaml(File.ReadAllText(@"docs\tags.yaml"));
-
-            var aggregatedDocuments = docuentReaders
+            logger.Log($"Read {tagService.TagServices.Length} tags");
+  
+            var aggregatedDocuments = documentReaders
                 .Select(reader => documentAggregationService.Aggregate(reader.Read())).ToArray();
 
             var finalDocument = new Document() {
@@ -38,7 +41,8 @@ namespace Banker.App {
             var googleDocumentWriter = new GoogleSpreadsheetDocumentWriter(
                 new ApplicationSettingsStorage(Properties.Settings.Default),
                 new GoogleSpreadsheetTransactionModelMapperBuilder().BuildConfiguration().CreateMapper(),
-                new DefaultGoogleAppDataProvider()
+                new DefaultGoogleAppDataProvider(),
+                logger
             );
            
             googleDocumentWriter.WriteDocument(finalDocument);

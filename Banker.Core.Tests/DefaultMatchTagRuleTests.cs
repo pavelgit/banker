@@ -1,4 +1,5 @@
 ﻿using Banker.Core.Tags;
+using Banker.Core.Tests.Stubs;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Banker.Core.Tests
         static object[] Cases =
         {
             new object[] {
-                new DefaultMatchTagRule {
+                new DefaultMatchTagRule(new StubLogger()) {
                     Tag = "mytag",
                     Matches = new string[] {
                         "OLIVER Twist pizza",
@@ -28,7 +29,7 @@ namespace Banker.Core.Tests
                 "mytag"
             },
             new object[] {
-                new DefaultMatchTagRule {
+                new DefaultMatchTagRule(new StubLogger()) {
                     Tag = "mytag",
                     Matches = new string[] {
                         "OLIVER TWIST burger",
@@ -43,7 +44,7 @@ namespace Banker.Core.Tests
                 "mytag"
             },
             new object[] {
-                new DefaultMatchTagRule {
+                new DefaultMatchTagRule(new StubLogger()) {
                     Tag = "mytag",
                     Matches = new string[] {
                         "Oliver Twist burger",

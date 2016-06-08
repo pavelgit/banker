@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using Banker.Core.Loggers;
+using CsvHelper;
 using FileHelpers;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace Banker.Core.DocumentReaders {
     public class CommerzbankDocumentReader : FileDocumentReader {
+
+        public CommerzbankDocumentReader(ILogger logger):base(logger) {
+        }
 
         string SkipLine(string s) {
             return s.Substring(s.IndexOf(Environment.NewLine) + Environment.NewLine.Length);

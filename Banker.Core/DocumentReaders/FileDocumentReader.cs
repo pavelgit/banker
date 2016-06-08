@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Banker.Core.Loggers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,11 @@ namespace Banker.Core.DocumentReaders {
         public string InputFolder { get; set; }
         public Encoding Encoding { get; set; } = Encoding.Default;
 
+        ILogger logger;
+        public FileDocumentReader(ILogger logger) {
+            this.logger = logger;
+        }
+
         IEnumerable<string> ReadFiles() {
             return Directory.GetFiles(InputFolder).Select(v => File.ReadAllText(v, Encoding));
         }
@@ -17,6 +23,7 @@ namespace Banker.Core.DocumentReaders {
         protected abstract Document ReadString(string s);
 
         public IEnumerable<Document> Read() {
+            logger.Log($"Start reading files from {InputFolder}");
             return ReadFiles().Select(ReadString);
         }
 

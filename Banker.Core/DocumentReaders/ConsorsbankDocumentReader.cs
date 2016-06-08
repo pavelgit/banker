@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using Banker.Core.Loggers;
+using CsvHelper;
 using FileHelpers;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace Banker.Core.DocumentReaders {
     public class ConsorsbankDocumentReader : FileDocumentReader {
 
-        public ConsorsbankDocumentReader(): base() {
+        public ConsorsbankDocumentReader(ILogger logger):base(logger) {
             Encoding = Encoding.GetEncoding("Windows-1252");
         }
 

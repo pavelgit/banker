@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Banker.Core.Loggers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,11 +11,10 @@ namespace Banker.Core.Tags {
         public string Tag;
         public string[] Matches;
 
-        public DefaultMatchTagRule() {
-
+        public DefaultMatchTagRule(ILogger logger):base(logger) {
         }
 
-        public DefaultMatchTagRule(string tag, string[] matches) {
+        public DefaultMatchTagRule(string tag, string[] matches, ILogger logger):this(logger) {
             this.Tag = tag;
             this.Matches = matches;
         }

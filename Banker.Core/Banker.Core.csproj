@@ -108,7 +108,10 @@
     <Compile Include="DocumentWriters\DefaultDocumentWriter.cs" />
     <Compile Include="DocumentWriters\GoogleSpreadsheetTransactionModel.cs" />
     <Compile Include="DocumentWriters\IDocumentWriter.cs" />
+    <Compile Include="DocumentWriters\IGoogleAppDataProvider.cs" />
     <Compile Include="ISettingsStorage.cs" />
+    <Compile Include="Loggers\ConsoleLogger.cs" />
+    <Compile Include="Loggers\ILogger.cs" />
     <Compile Include="Mappers\GoogleSpreadsheetTransactionModelMapperBuilder.cs" />
     <Compile Include="Reports\TagSummaryReport.cs" />
     <Compile Include="Tags\YamlListTagService.cs" />

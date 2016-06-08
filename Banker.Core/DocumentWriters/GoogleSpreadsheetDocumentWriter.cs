@@ -5,6 +5,7 @@ using Google.GData.Client;
 using Google.GData.Spreadsheets;
 using System.Diagnostics;
 using AutoMapper;
+using Banker.Core.Loggers;
 
 namespace Banker.Core.DocumentWriters {
     public class GoogleSpreadsheetDocumentWriter : IDocumentWriter {
@@ -26,6 +27,7 @@ namespace Banker.Core.DocumentWriters {
         private ISettingsStorage settingsStorage;
         private IMapper transactionMapper;
         private IGoogleAppDataProvider googleAppDataProvider;
+        private ILogger logger;
 
         const string SCOPE = "https://spreadsheets.google.com/feeds https://docs.google.com/feeds";
         const string REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
@@ -38,19 +40,23 @@ namespace Banker.Core.DocumentWriters {
         public GoogleSpreadsheetDocumentWriter(
             ISettingsStorage settingsStorage,
             IMapper transactionMapper,
-            IGoogleAppDataProvider googleAppDataProvider
+            IGoogleAppDataProvider googleAppDataProvider,
+            ILogger logger
         ) {
             this.settingsStorage = settingsStorage;
             this.transactionMapper = transactionMapper;
             this.googleAppDataProvider = googleAppDataProvider;
+            this.logger = logger;
         }
 
         public void WriteDocument(Document document) {
+            logger.Log("Start writing document to google drive");
             var service = AuthorizeAndConnect();
             var spreadsheet = GetMainSpreadsheet(service);
             var worksheet = GetMainWorksheet(spreadsheet);
             FormatMainWorksheet(service, worksheet, document);
             WriteDataToWorksheet(service, worksheet, document);
+            logger.Log("Finsihed writing document to google drive");
         }
 
         void GetAccessTokenThroughAuth(OAuth2Parameters parameters) {
@@ -78,6 +84,7 @@ namespace Banker.Core.DocumentWriters {
         }
 
         SpreadsheetsService AuthorizeAndConnect() {
+            logger.Log("Start connection and auth to google drive");
             OAuth2Parameters parameters = new OAuth2Parameters() {
                 ClientId = googleAppDataProvider.GetClientId(),
                 ClientSecret = googleAppDataProvider.GetClientSecret(),
@@ -96,10 +103,12 @@ namespace Banker.Core.DocumentWriters {
                 new GOAuth2RequestFactory(null, APPLICATION_NAME, parameters);
             SpreadsheetsService service = new SpreadsheetsService(APPLICATION_NAME);
             service.RequestFactory = requestFactory;
+            logger.Log("Connected and authorized to google drive");
             return service;
         }
 
         SpreadsheetEntry GetMainSpreadsheet(SpreadsheetsService service) {
+            logger.Log("Getting main spreadsheet");
             var query = new SpreadsheetQuery();
             var feed = service.Query(query);
             var spreadsheetId = settingsStorage.Get(SPREADSHEET_ID_KEY);
@@ -109,11 +118,13 @@ namespace Banker.Core.DocumentWriters {
         }
 
         WorksheetEntry GetMainWorksheet(SpreadsheetEntry spreadsheet) {
+            logger.Log("Getting main worksheet");
             return (WorksheetEntry)spreadsheet.Worksheets.Entries.Where(
                 worksheet => worksheet.Title.Text == MAIN_WORKSHEET_TITLE).First();
         }
 
         void FormatMainWorksheet(SpreadsheetsService service, WorksheetEntry worksheet, Document document) {
+            logger.Log("Formatting main spreadsheet");
             var dummy = new GoogleSpreadsheetTransactionModel();
             worksheet.Cols = (uint)dummy.GetPairs().Count();
             worksheet.Rows = 1;
@@ -124,6 +135,7 @@ namespace Banker.Core.DocumentWriters {
         }
 
         void WriteDataToWorksheet(SpreadsheetsService service, WorksheetEntry worksheet, Document document) {
+            logger.Log("Writing data to the worksheet");
             CellQuery cellQuery = new CellQuery(worksheet.CellFeedLink);
             CellFeed cellFeed = service.Query(cellQuery);
             var cells = CreateCellList(document);
